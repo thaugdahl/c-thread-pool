@@ -6,6 +6,9 @@ bool thread_pool_finalize(ThreadPool *pool) {
     pool->threads[i] = NULL;
   }
 
+    free(pool->threads);
+    free(pool->data);
+
   return true;
 }
 

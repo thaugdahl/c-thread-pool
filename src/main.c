@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 
     while ( true ) {
 
-        if ( count > 10000000 ) {
+        if ( count > 1000 ) {
             thread_pool_foreach(&pool, thread_set_terminate);
             break;
         }
@@ -110,9 +110,11 @@ int main(int argc, char *argv[])
 
     for ( size_t i = 0; i < NUM_THREADS; i++ ) {
         thread_join(thread_pool_get(&pool, i), NULL);
+        free(buffers[i].buffer);
     }
 
     DEBUGMSG("%s\n", "ROOT: Everything is done\n");
+
 
     thread_pool_finalize(&pool);
 
