@@ -2,7 +2,7 @@
 
 bool thread_pool_finalize(ThreadPool *pool) {
   for (size_t i = 0; i < pool->num_threads; i++) {
-    free_thread(pool->threads[i]);
+    thread_free(pool->threads[i]);
     pool->threads[i] = NULL;
   }
 

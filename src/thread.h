@@ -6,16 +6,8 @@
 
 #include <pthread.h>
 #include <stdbool.h>
+#include "conditionvar.h"
 
-
-// TODO: Refactor
-
-typedef struct {
-    pthread_cond_t condition;
-    pthread_mutex_t mutex;
-} CondMutexPair;
-
-CondMutexPair *init_cond_mutex_pair(void);
 
 
 //==------------------------------------------------------------==/
@@ -38,7 +30,7 @@ typedef enum {
 
 typedef struct {
     ///< The state of the thread
-    ThreadState state;
+    volatile ThreadState state;
 
     ///< Whether the thread has been instructed to terminate
     bool shouldTerminate;
@@ -54,16 +46,16 @@ typedef struct {
     pthread_t thread;
 
     ///< The mutex/condition pair for the waiter / waker.
-    CondMutexPair *waiter;
+    ConditionVariable *waiter;
 } ThreadControlBlock;
 
 
 
 ThreadControlBlock init_thread_control_block(void);
 
-void free_thread_control_waiter(CondMutexPair *pair);
+void thread_free_control_waiter(ConditionVariable *pair);
 
-ThreadControlBlock *free_thread_control_block(ThreadControlBlock *control);
+ThreadControlBlock *thread_free_control_block(ThreadControlBlock *control);
 
 //==------------------------------------------------------------==/
 // Thread
@@ -76,7 +68,7 @@ typedef struct {
 
 /// @brief Clean up thread resources
 /// @param thread The thread whose resources to free
-Thread *free_thread(Thread *thread);
+Thread *thread_free(Thread *thread);
 
 /// @brief Make the thread wait on a condition
 /// @param thread The thread to make wait

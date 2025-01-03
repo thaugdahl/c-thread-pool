@@ -101,7 +101,8 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_main_OBJECTS = main-main.$(OBJEXT) main-circbuffer.$(OBJEXT) \
-	main-thread.$(OBJEXT) main-threadpool.$(OBJEXT)
+	main-thread.$(OBJEXT) main-threadpool.$(OBJEXT) \
+	main-conditionvar.$(OBJEXT) main-channel.$(OBJEXT)
 main_OBJECTS = $(am_main_OBJECTS)
 main_LDADD = $(LDADD)
 main_LINK = $(CCLD) $(main_CFLAGS) $(CFLAGS) $(main_LDFLAGS) \
@@ -121,9 +122,10 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/main-circbuffer.Po \
-	./$(DEPDIR)/main-main.Po ./$(DEPDIR)/main-thread.Po \
-	./$(DEPDIR)/main-threadpool.Po
+am__depfiles_remade = ./$(DEPDIR)/main-channel.Po \
+	./$(DEPDIR)/main-circbuffer.Po \
+	./$(DEPDIR)/main-conditionvar.Po ./$(DEPDIR)/main-main.Po \
+	./$(DEPDIR)/main-thread.Po ./$(DEPDIR)/main-threadpool.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -261,9 +263,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-main_SOURCES = main.c circbuffer.c thread.c threadpool.c
-main_CFLAGS = -Wpedantic -Wall -Werror -Wundef -Wconversion -Wshadow @CFLAGS@
-main_LDFLAGS = -lm @LDFLAGS@
+main_SOURCES = main.c circbuffer.c thread.c threadpool.c conditionvar.c channel.c
+main_CFLAGS = -Wpedantic -Wall -Werror -Wundef -Wconversion -Wshadow
+main_LDFLAGS = -lm
 all: all-am
 
 .SUFFIXES:
@@ -350,7 +352,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main-channel.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main-circbuffer.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main-conditionvar.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main-main.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main-thread.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main-threadpool.Po@am__quote@ # am--include-marker
@@ -430,6 +434,34 @@ main-threadpool.obj: threadpool.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='threadpool.c' object='main-threadpool.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(main_CFLAGS) $(CFLAGS) -c -o main-threadpool.obj `if test -f 'threadpool.c'; then $(CYGPATH_W) 'threadpool.c'; else $(CYGPATH_W) '$(srcdir)/threadpool.c'; fi`
+
+main-conditionvar.o: conditionvar.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(main_CFLAGS) $(CFLAGS) -MT main-conditionvar.o -MD -MP -MF $(DEPDIR)/main-conditionvar.Tpo -c -o main-conditionvar.o `test -f 'conditionvar.c' || echo '$(srcdir)/'`conditionvar.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/main-conditionvar.Tpo $(DEPDIR)/main-conditionvar.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='conditionvar.c' object='main-conditionvar.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(main_CFLAGS) $(CFLAGS) -c -o main-conditionvar.o `test -f 'conditionvar.c' || echo '$(srcdir)/'`conditionvar.c
+
+main-conditionvar.obj: conditionvar.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(main_CFLAGS) $(CFLAGS) -MT main-conditionvar.obj -MD -MP -MF $(DEPDIR)/main-conditionvar.Tpo -c -o main-conditionvar.obj `if test -f 'conditionvar.c'; then $(CYGPATH_W) 'conditionvar.c'; else $(CYGPATH_W) '$(srcdir)/conditionvar.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/main-conditionvar.Tpo $(DEPDIR)/main-conditionvar.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='conditionvar.c' object='main-conditionvar.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(main_CFLAGS) $(CFLAGS) -c -o main-conditionvar.obj `if test -f 'conditionvar.c'; then $(CYGPATH_W) 'conditionvar.c'; else $(CYGPATH_W) '$(srcdir)/conditionvar.c'; fi`
+
+main-channel.o: channel.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(main_CFLAGS) $(CFLAGS) -MT main-channel.o -MD -MP -MF $(DEPDIR)/main-channel.Tpo -c -o main-channel.o `test -f 'channel.c' || echo '$(srcdir)/'`channel.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/main-channel.Tpo $(DEPDIR)/main-channel.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='channel.c' object='main-channel.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(main_CFLAGS) $(CFLAGS) -c -o main-channel.o `test -f 'channel.c' || echo '$(srcdir)/'`channel.c
+
+main-channel.obj: channel.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(main_CFLAGS) $(CFLAGS) -MT main-channel.obj -MD -MP -MF $(DEPDIR)/main-channel.Tpo -c -o main-channel.obj `if test -f 'channel.c'; then $(CYGPATH_W) 'channel.c'; else $(CYGPATH_W) '$(srcdir)/channel.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/main-channel.Tpo $(DEPDIR)/main-channel.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='channel.c' object='main-channel.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(main_CFLAGS) $(CFLAGS) -c -o main-channel.obj `if test -f 'channel.c'; then $(CYGPATH_W) 'channel.c'; else $(CYGPATH_W) '$(srcdir)/channel.c'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -557,7 +589,9 @@ clean: clean-am
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
+	-rm -f ./$(DEPDIR)/main-channel.Po
 	-rm -f ./$(DEPDIR)/main-circbuffer.Po
+	-rm -f ./$(DEPDIR)/main-conditionvar.Po
 	-rm -f ./$(DEPDIR)/main-main.Po
 	-rm -f ./$(DEPDIR)/main-thread.Po
 	-rm -f ./$(DEPDIR)/main-threadpool.Po
@@ -606,7 +640,9 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
+	-rm -f ./$(DEPDIR)/main-channel.Po
 	-rm -f ./$(DEPDIR)/main-circbuffer.Po
+	-rm -f ./$(DEPDIR)/main-conditionvar.Po
 	-rm -f ./$(DEPDIR)/main-main.Po
 	-rm -f ./$(DEPDIR)/main-thread.Po
 	-rm -f ./$(DEPDIR)/main-threadpool.Po

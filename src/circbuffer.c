@@ -9,7 +9,7 @@ CircularBuffer circular_buffer_init(size_t capacity_) {
   result.head = 0;
   result.tail = 0;
 
-  result.buffer = malloc(sizeof(int) * capacity_);
+  result.buffer = malloc(sizeof(void *) * capacity_);
 
   if (!result.buffer) {
     fprintf(stderr, "Failed to allocate circular buffer with capacity %zu\n",
@@ -38,27 +38,40 @@ bool circular_buffer_full(CircularBuffer *buffer) {
   return false;
 }
 
-bool circular_buffer_insert(CircularBuffer *buffer, int elem) {
+bool circular_buffer_insert(CircularBuffer *buffer, void *elem) {
   if (circular_buffer_full(buffer)) {
     return false;
   }
 
   size_t next = circular_buffer_next_index(buffer, buffer->head);
 
-  buffer->buffer[next] = elem;
+  buffer->buffer[buffer->head] = elem;
   buffer->head = next;
 
   return true;
 }
 
-bool circular_buffer_take(CircularBuffer *buffer, int *res) {
+size_t circular_buffer_size(CircularBuffer *buffer)
+{
+    return (buffer->head + buffer->tail - 1) % buffer->capacity;
+}
+
+bool circular_buffer_take(CircularBuffer *buffer, void **res) {
   if (circular_buffer_empty(buffer))
     return false;
 
   size_t next = circular_buffer_next_index(buffer, buffer->tail);
   *res = buffer->buffer[buffer->tail];
 
+    buffer->buffer[buffer->tail] = NULL;
+
+
   buffer->tail = next;
   return true;
+}
+
+void circular_buffer_free(CircularBuffer *buffer)
+{
+    free(buffer->buffer);
 }
 
