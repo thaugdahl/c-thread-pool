@@ -46,39 +46,27 @@ void *wait_for_stuff(void *args)
     Channel *channel = (Channel *) data->arg;
 
     while ( ! channel_is_closed(channel) ) {
-        // if ( data->control.shouldTerminate == true ) break;
-
         DEBUGMSG("%zu: Waiting for stuff...\n", data->control.ID);
-        // thread_wait(data);
-        // DEBUGMSG("%zu, Got it!\n", data->control.ID);
 
-        // Get the message
         Array *current = NULL;
+        int res = channel_recv(channel, (void **) &current);
 
-        current = (Array *) channel_recv(channel);
-
-        if ( current == NULL ) {
-            DEBUGMSG("%zu, Got a NULL result!\n", data->control.ID);
+        if ( res && channel_is_closed(channel) ) {
             break;
         }
-        DEBUGMSG("%zu, Got it!\n", data->control.ID);
 
-
-        for ( size_t i = 0; i < current->size; i++ ) {
-            //printf("%d ", current->buffer[i]);
-        }
-        // printf("\n");
         free(current->buffer);
         free(current);
+
+        DEBUGMSG("%zu, Got it!\n", data->control.ID);
     }
 
-    DEBUGMSG("%zu OUTSIDE\n", data->control.ID);
+    DEBUGMSG("%zu Is done with the main loop\n", data->control.ID);
 
     thread_set_state(data, TERMINATED);
 
-    DEBUGMSG("%zu DONE SETTING STATE\n", data->control.ID);
-
-    printf("Thread %zu exiting\n", data->control.ID);
+    DEBUGMSG("%zu Is done setting state\n", data->control.ID);
+    DEBUGMSG("%zu exiting\n", data->control.ID);
 
     return NULL;
 }
@@ -118,7 +106,7 @@ int main(int argc, char *argv[])
 
     while ( true ) {
 
-        if ( count > 100000 ) {
+        if ( count > 1000000 ) {
             thread_pool_foreach(&pool, close_channels);
 
             for ( size_t i = 0; i < pool.num_threads; i++ ) {
@@ -130,14 +118,6 @@ int main(int argc, char *argv[])
         for ( size_t i = 0; i < NUM_THREADS; i++ )
         {
                 give_thread_work_to_do(channels[i]);
-                // thread_wake(thread_pool_get(&pool, i));
-
-                // Simulate work
-                for ( int z = 0; z < 1000; z++ ) {
-                    double k = 9000.0;
-                    k = sqrt(k);
-                }
-
                 count++;
         }
     }

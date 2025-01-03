@@ -6,6 +6,8 @@
 #include "conditionvar.h"
 #include <stdlib.h>
 
+// TODO: Add unbuffered sends and receives
+
 typedef struct Channel_ {
     // The channel needs a mutex and a condition pair
     pthread_mutex_t mutex;
@@ -21,9 +23,9 @@ Channel *channel_init(void);
 
 bool channel_full(Channel *channel);
 
-void channel_send(Channel *channel, void *data);
+int channel_send(Channel *channel, void *data);
 
-void *channel_recv(Channel *channel);
+int channel_recv(Channel *channel, void **data);
 
 bool channel_empty(Channel *channel);
 

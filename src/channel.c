@@ -21,8 +21,13 @@ void channel_destroy(Channel *channel)
     free(channel);
 }
 
-void channel_send(Channel *channel, void *data)
+int channel_send(Channel *channel, void *data)
 {
+
+    if ( channel_is_closed(channel) ) {
+        return -1;
+    }
+
     channel_lock(channel);
 
     // Wait for the channel to be ready
@@ -34,26 +39,36 @@ void channel_send(Channel *channel, void *data)
 
     pthread_cond_signal(&channel->notEmpty);
     channel_unlock(channel);
+
+    return 0;
 }
 
-void *channel_recv(Channel *channel) {
+int channel_recv(Channel *channel, void **data) {
      // channel_lock(channel);
 
 
     // Wait for channel to get data
      while ( channel_empty(channel) ) {
+
+        // Need to check if the channel was closed
+        // If the receiving thread was notified and resumed,
+        // but nothing is added to the channel, then it is likely
+        // that the channel was closed.
+        if ( channel_is_closed(channel) ) {
+            return -1;
+        }
+
         channel_lock(channel);
         pthread_cond_wait(&channel->notEmpty, &channel->mutex);
         channel_unlock(channel);
      }
 
-    void *data = NULL;
-    circular_buffer_take(&channel->circBuffer, &data);
+    circular_buffer_take(&channel->circBuffer, data);
 
     pthread_cond_signal(&channel->notFull);
     channel_unlock(channel);
 
-    return data;
+    return 0;
  }
 
 
@@ -77,6 +92,7 @@ void channel_close(Channel *chan) {
     pthread_mutex_lock(&chan->mutex);
     chan->closed = true;
     pthread_cond_broadcast(&chan->notEmpty);
+    pthread_cond_broadcast(&chan->notFull);
     pthread_mutex_unlock(&chan->mutex);
 }
 
